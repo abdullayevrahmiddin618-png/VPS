@@ -2,13 +2,13 @@ name: Continuous Persistent VPS
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
+    - cron: '0 */6 * * *'   # Har 6 soatda
   workflow_dispatch:
 
 jobs:
   vps-session:
     runs-on: ubuntu-latest
-    timeout-minutes: 350   # Just under 6 hours
+    timeout-minutes: 350
 
     steps:
       - name: Checkout repo
@@ -67,7 +67,8 @@ jobs:
       - name: Start tmux session for SSH access
         uses: mxschmitt/action-tmate@v3
         with:
-          limit-access-to-actor: false   # Warning kamayishi uchun (xohlasangiz true qiling)
+          detached: true
+          limit-access-to-actor: false
 
       - name: Show Tailscale IP and tmux info
         run: |
