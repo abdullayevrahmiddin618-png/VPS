@@ -29,7 +29,7 @@ jobs:
           sudo apt update -y
           sudo apt install -y tmux curl unzip sudo net-tools neofetch
 
-      - name: Install Tailscale official script
+      - name: Install Tailscale
         run: curl -fsSL https://tailscale.com/install.sh | sh
 
       - name: Restore backup files
@@ -64,19 +64,23 @@ jobs:
             echo "biralo ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/biralo
           fi
 
+      # === Yangi tmux sessiya (takrorlanmaydi) ===
       - name: Start tmux session for SSH access
-        uses: mxschmitt/action-tmate@v3
-        with:
-          detached: true
-          limit-access-to-actor: false
+        run: |
+          tmux new-session -d -s persistent "bash --login"
+          echo "🟢 tmux session created: persistent"
+          echo "Web shell or SSH orqali kirish uchun keyingi bosqichdagi ma'lumotni ishlat"
+          sleep 5
 
-      - name: Show Tailscale IP and tmux info
+      - name: Show Tailscale IP and connection info
         run: |
           echo "🟢 Tailscale IP:"
           tailscale ip -4 || echo "Tailscale IP not found"
           echo ""
-          echo "🔗 tmate SSH session:"
-          cat $HOME/.tmate.sock/ssh || echo "tmate session not available"
+          echo "🔗 To connect via SSH (after workflow finishes or from another terminal):"
+          echo "ssh biralo@<Tailscale_IP>"
+          echo ""
+          echo "Inside the runner you can attach to tmux with: tmux attach -t persistent"
 
       - name: Sleep to keep VPS alive
         run: sleep 21600  # 6 hours
